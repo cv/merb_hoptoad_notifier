@@ -61,14 +61,21 @@ describe "HoptoadNotifier" do
       end
 
       describe "good input" do
-        before(:each) do
+        it "should return true" do
           mock(HoptoadNotifier).send_to_hoptoad(anything).times(2) { true }
           @request = setup_merb_request
           mock(@request).exceptions { [RuntimeError.new('ZOMG'), RuntimeError.new('ORLY')]}
           mock(@request).params { {"q"=>"0017000000SmnJ0"} }
-        end
-        it "should return true" do
+
           HoptoadNotifier.notify_hoptoad(@request, {}).should be_true
+        end
+        
+        it "should accept exceptions as an optional parameter" do
+          @request = setup_merb_request
+          mock(HoptoadNotifier).send_to_hoptoad(anything) { true }
+          mock(@request).params { {"q"=>"0017000000SmnJ0"} }
+
+          HoptoadNotifier.notify_hoptoad(@request, {}, Exception.new('an error occurred')).should be_true
         end
       end
     end
