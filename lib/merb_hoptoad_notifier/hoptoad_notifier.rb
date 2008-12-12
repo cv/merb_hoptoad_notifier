@@ -19,10 +19,8 @@ module HoptoadNotifier
     def notify_hoptoad(request, session, exception=nil)
       return if request.nil?
       params = request.params
-
-      (request.exceptions ||= []) << exception if exception
       
-      request.exceptions.each do |exception|
+      [exception, request.exceptions].flatten.compact.each do |exception|
         data = {
           :api_key       => HoptoadNotifier.api_key,
           :error_class   => Extlib::Inflection.camelize(exception.class.name),
